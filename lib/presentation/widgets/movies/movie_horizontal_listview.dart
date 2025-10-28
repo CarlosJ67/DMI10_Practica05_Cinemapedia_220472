@@ -1,8 +1,10 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia_220472/config/helpers/human_formats.dart';
 import 'package:cinemapedia_220472/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
 
 
-class MovieHorizontalListview extends StatelessWidget {
+class MovieHorizontalListview extends StatefulWidget {
 
   final List<Movie> movies;
   final String? title;
@@ -12,22 +14,42 @@ class MovieHorizontalListview extends StatelessWidget {
   const MovieHorizontalListview({super.key, required this.movies, this.title, this.subTitle, this.loadNextPage});
 
   @override
+  State<MovieHorizontalListview> createState() => _MovieHorizontalListviewState();
+}
+
+class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
+  @override
   Widget build(BuildContext context) {
+    final scrollController = ScrollController();
+
+    @override 
+    void initState(){
+      super.initState();
+      scrollController.addListener((){
+        if(widget.loadNextPage == null) return;
+        if(scrollController.position.pixels +200>= scrollController.position.maxScrollExtent){
+          print('Cargado las peliculas recientes');
+          widget.loadNextPage!();
+        }
+      });
+    }
+
     return SizedBox(
-      height: 350,
+      height: 370,
       child: Column(
         children: [
 
-          if(title !=null || subTitle !=null)
-          _CurrDate(place: title, formateDate: subTitle,),
+          if(widget.title !=null || widget.subTitle !=null)
+          _CurrDate(place: widget.title, formateDate: widget.subTitle,),
 
           Expanded(
             child: ListView.builder(
-              itemCount: movies.length,
+              controller: scrollController,
+              itemCount: widget.movies.length,
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index){
-                return _Slide(movie: movies[index]);
+                return _Slide(movie: widget.movies[index]);
               }
             )
           )
@@ -38,12 +60,15 @@ class MovieHorizontalListview extends StatelessWidget {
 }
 
 
+
+
 class _Slide extends StatelessWidget {
   final Movie movie;
   const _Slide({required this.movie});
 
   @override
   Widget build(BuildContext context) {
+    final textStyles = Theme.of(context).textTheme;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
@@ -51,17 +76,62 @@ class _Slide extends StatelessWidget {
         children: [
           SizedBox(
             width: 150,
+            height: 200,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.network(
                 movie.posterPath,
                 width: 150,
+                fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
-                  return child;
+                  if (loadingProgress!= null){
+                    return const Padding(padding: EdgeInsets.all(8.0), child: CircularProgressIndicator(strokeWidth: 2,));
+                  }
+                  return FadeIn(child: child);
                 } ,
               ),
             ),
-          )
+          ),
+
+          const SizedBox(height: 5),
+          
+          // ✅ Título con altura flexible
+          Flexible( // ✅ Cambiar SizedBox por Flexible
+            child: SizedBox(
+              width: 150,
+              child: Text(
+                movie.title,  
+                style: const TextStyle(fontSize: 14),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 3,),
+
+         SizedBox(
+            width: 150,
+            height: 20, 
+            child: Row(
+              children: [
+                Icon(Icons.star_half_outlined, color: Colors.yellow.shade800, size: 16), 
+                const SizedBox(width: 3),
+                Text( 
+                  '${movie.voteAverage.toStringAsFixed(1)}', 
+                  style: textStyles.bodyMedium?.copyWith(color: Colors.yellow.shade800),
+                ),
+                const Spacer(),
+                Flexible( 
+                  child: Text(
+                    HumanFormats.humanReadbleNumber(movie.popularity), 
+                    style: textStyles.bodySmall,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

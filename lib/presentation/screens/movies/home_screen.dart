@@ -4,6 +4,9 @@ import 'package:cinemapedia_220472/presentation/providers/movies/movies_provider
 import 'package:cinemapedia_220472/presentation/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 
 /// Pantalla principal de la aplicación que muestra las películas en cartelera.
 /// 
@@ -43,9 +46,15 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   @override
   void initState() {
     super.initState();
-    /// Carga la primera página de películas al inicializar la pantalla
-    /// Usa .read() porque es una acción única, no una escucha continua
+    initializeDateFormatting('es_ES', null);
     ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+  }
+
+    /// ✅ Función para obtener la fecha actual formateada
+  String get currentFormattedDate {
+    final now = DateTime.now();
+    final formatter = DateFormat('EEEE, d \'de\' MMMM', 'es_ES');
+    return formatter.format(now);
   }
 
   @override
@@ -58,12 +67,12 @@ class _HomeViewState extends ConsumerState<_HomeView> {
         MovieSlidershow(movies: slideShowMovies),
         MovieHorizontalListview(movies: nowPlayingMovies,
         title: 'En cines',
-        subTitle: 'Miercoles, 27 de Octubre',
+        subTitle: currentFormattedDate,
+        loadNextPage: (){
+          print('Evento lanzado por el listener de HorizontalListView');
+        } ,
         ),
       ]
   );
   }
-
-
-  
 }

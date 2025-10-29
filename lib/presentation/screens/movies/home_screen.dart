@@ -61,18 +61,49 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   Widget build(BuildContext context){
     final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     final slideShowMovies = ref.watch(movieSlideshowProvider);
-    return Column(
-      children: [
-      CustomAppbar(),
-        MovieSlidershow(movies: slideShowMovies),
-        MovieHorizontalListview(movies: nowPlayingMovies,
-        title: 'En cines',
-        subTitle: currentFormattedDate,
-        loadNextPage: (){
-          print('Evento lanzado por el listener de HorizontalListView');
-        } ,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+        CustomAppbar(),
+          MovieSlidershow(movies: slideShowMovies),
+          MovieHorizontalListview(movies: nowPlayingMovies,
+          title: 'En cines',
+          subTitle: currentFormattedDate,
+          loadNextPage: () =>
+            ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+          ),
+      
+          MovieHorizontalListview(movies: nowPlayingMovies,
+          title: 'Proximamente',
+          subTitle: currentFormattedDate,
+          loadNextPage: () =>
+            ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+          ),
+      
+          MovieHorizontalListview(movies: nowPlayingMovies,
+          title: 'Populares',
+          subTitle: currentFormattedDate,
+          loadNextPage: () =>
+            ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+          ),
+      
+          MovieHorizontalListview(movies: nowPlayingMovies,
+          title: 'Mejor valoradas',
+          subTitle: currentFormattedDate,
+          loadNextPage: () =>
+            ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+          ),
+      
+          MovieHorizontalListview(movies: nowPlayingMovies,
+          title: 'Cine Mexicano',
+          subTitle: currentFormattedDate,
+          loadNextPage: () =>
+            ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+          ),
+
+          const SizedBox(height: 10)
+        ]
         ),
-      ]
-  );
+    );
   }
 }

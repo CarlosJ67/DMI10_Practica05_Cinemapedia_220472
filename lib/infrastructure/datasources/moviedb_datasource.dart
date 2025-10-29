@@ -26,7 +26,9 @@ class MoviedbDataSource extends MoviesDatasource{
   @override
   Future<List<Movie>> getNowPlaying({int page = 1}) async {
     /// Realiza petición GET al endpoint de películas en cartelera
-    final response = await dio.get('/movie/now_playing');
+    final response = await dio.get('/movie/now_playing', queryParameters: {
+      'page': page
+    });
     final movieDBResponse = MovieDbResponse.fromJson(response.data);
 
     /// Filtra películas sin póster y las convierte a entidades

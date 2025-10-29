@@ -18,21 +18,30 @@ class MovieHorizontalListview extends StatefulWidget {
 }
 
 class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
+
+  final scrollController = ScrollController();
+
+
+  @override 
+  void initState(){
+    super.initState();
+    scrollController.addListener((){
+      if(widget.loadNextPage == null) return;
+      if(scrollController.position.pixels +200>= scrollController.position.maxScrollExtent){
+        print('Cargado las peliculas siguientes');
+        widget.loadNextPage!();
+      }
+    });
+  }
+
+  @override
+  void dispose(){
+    scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final scrollController = ScrollController();
-
-    @override 
-    void initState(){
-      super.initState();
-      scrollController.addListener((){
-        if(widget.loadNextPage == null) return;
-        if(scrollController.position.pixels +200>= scrollController.position.maxScrollExtent){
-          print('Cargado las peliculas recientes');
-          widget.loadNextPage!();
-        }
-      });
-    }
 
     return SizedBox(
       height: 370,
@@ -159,7 +168,7 @@ class _CurrDate extends StatelessWidget {
         children: [
           if(place !=null)
             Text(place!, style: placeStyle,),
-          Spacer(),
+          const Spacer(), // ✅ Agregado const
           if(formateDate!=null)
           FilledButton.tonal(onPressed: (){}, child: Text(formateDate!))
         ],

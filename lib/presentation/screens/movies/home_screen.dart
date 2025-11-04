@@ -48,6 +48,10 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     super.initState();
     initializeDateFormatting('es_ES', null);
     ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+    ref.read(popularMoviesProvider.notifier).loadNextPage();
+    ref.read(upcomingMoviesProvider.notifier).loadNextPage();
+    ref.read(mexicanMoviesProvider.notifier).loadNextPage();
+    ref.read(topRatedMoviesProvider.notifier).loadNextPage();
   }
 
     /// ✅ Función para obtener la fecha actual formateada
@@ -61,6 +65,10 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   Widget build(BuildContext context){
     final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     final slideShowMovies = ref.watch(movieSlideshowProvider);
+    final popular = ref.watch(popularMoviesProvider);
+    final topRated = ref.watch(topRatedMoviesProvider);
+    final upcomingMovies = ref.watch(upcomingMoviesProvider);
+    final mexicanMovies = ref.watch(mexicanMoviesProvider);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -73,32 +81,36 @@ class _HomeViewState extends ConsumerState<_HomeView> {
             ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
           ),
       
-          MovieHorizontalListview(movies: nowPlayingMovies,
+          MovieHorizontalListview(
+          movies: upcomingMovies,
           title: 'Proximamente',
           subTitle: currentFormattedDate,
           loadNextPage: () =>
-            ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+            ref.read(upcomingMoviesProvider.notifier).loadNextPage()
           ),
       
-          MovieHorizontalListview(movies: nowPlayingMovies,
+          MovieHorizontalListview(
+          movies: popular,
           title: 'Populares',
           subTitle: currentFormattedDate,
           loadNextPage: () =>
-            ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+            ref.read(popularMoviesProvider.notifier).loadNextPage()
           ),
       
-          MovieHorizontalListview(movies: nowPlayingMovies,
+          MovieHorizontalListview(
+          movies: topRated,
           title: 'Mejor valoradas',
           subTitle: currentFormattedDate,
           loadNextPage: () =>
-            ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+            ref.read(topRatedMoviesProvider.notifier).loadNextPage()
           ),
       
-          MovieHorizontalListview(movies: nowPlayingMovies,
+          MovieHorizontalListview(
+          movies: mexicanMovies,
           title: 'Cine Mexicano',
           subTitle: currentFormattedDate,
           loadNextPage: () =>
-            ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+            ref.read(mexicanMoviesProvider.notifier).loadNextPage()
           ),
 
           const SizedBox(height: 10)

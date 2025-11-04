@@ -40,4 +40,80 @@ class MoviedbDataSource extends MoviesDatasource{
 
     return movies;
   }
+
+    @override
+    Future<List<Movie>> getPopular({int page = 1}) async {
+    /// Realiza petición GET al endpoint de películas populares
+    final response = await dio.get('/movie/popular', queryParameters: {
+      'page': page
+    });
+    final movieDBResponse = MovieDbResponse.fromJson(response.data);
+
+    /// Filtra películas sin póster y las convierte a entidades
+    final List<Movie> movies = movieDBResponse.results
+      .where((moviedb)=> moviedb.posterPath != 'no-poster')
+      .map(
+        (moviedb) => MovieMapper.movieDBToEntity(moviedb)
+      ).toList();
+
+    return movies;
+  }
+
+    @override
+    Future<List<Movie>> getUpcoming({int page = 1}) async {
+    /// Realiza petición GET al endpoint de películas próximas
+    final response = await dio.get('/movie/upcoming', queryParameters: {
+      'page': page
+    });
+    final movieDBResponse = MovieDbResponse.fromJson(response.data);
+
+    /// Filtra películas sin póster y las convierte a entidades
+    final List<Movie> movies = movieDBResponse.results
+      .where((moviedb)=> moviedb.posterPath != 'no-poster')
+      .map(
+        (moviedb) => MovieMapper.movieDBToEntity(moviedb)
+      ).toList();
+
+    return movies;
+  }
+
+    @override
+    Future<List<Movie>> getTopRated({int page = 1}) async {
+    /// Realiza petición GET al endpoint de películas mejor valoradas
+    final response = await dio.get('/movie/top_rated', queryParameters: {
+      'page': page
+    });
+    final movieDBResponse = MovieDbResponse.fromJson(response.data);
+
+    /// Filtra películas sin póster y las convierte a entidades
+    final List<Movie> movies = movieDBResponse.results
+      .where((moviedb)=> moviedb.posterPath != 'no-poster')
+      .map(
+        (moviedb) => MovieMapper.movieDBToEntity(moviedb)
+      ).toList();
+
+    return movies;
+  }
+
+      @override
+    Future<List<Movie>> getMexicanMovies({int page = 1}) async {
+    /// Realiza petición GET al endpoint de películas mexicanas
+    final response = await dio.get('/discover/movie', queryParameters: {
+      'page': page,
+      'region': 'MX',
+      'with_original_language': 'es',
+      'sort_by':'vote_average.desc',
+      'vote_count.gte':10
+    });
+    final movieDBResponse = MovieDbResponse.fromJson(response.data);
+
+    /// Filtra películas sin póster y las convierte a entidades
+    final List<Movie> movies = movieDBResponse.results
+      .where((moviedb)=> moviedb.posterPath != 'no-poster')
+      .map(
+        (moviedb) => MovieMapper.movieDBToEntity(moviedb)
+      ).toList();
+
+    return movies;
+  }
 }
